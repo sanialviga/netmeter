@@ -1,0 +1,21 @@
+# Operating System Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.tmp
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test Screenshots & Scratch Logs
+screenshot-*.png
+*.log
+
+# Editor & IDE Directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

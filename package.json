@@ -1,0 +1,22 @@
+{
+  "name": "netmeter-pro",
+  "version": "2.5.0",
+  "description": "NetMeter Pro - Solusi Asesmen Real Bandwidth & Throughput Jaringan Lokal (Intranet) Enterprise-Grade untuk Rumah Sakit, Klinik, Kampus, dan Perkantoran",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "netmeter",
+    "speedtest",
+    "lan-assessment",
+    "throughput",
+    "intranet",
+    "gigabit",
+    "network-audit",
+    "hospital-it",
+    "campus-network"
+  ],
+  "author": "Adi Sani Alviga",
+  "license": "LGPL-3.0"
+}

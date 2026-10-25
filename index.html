@@ -1,0 +1,3115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NetMeter - Local Bandwidth & Intranet Assessment Pro</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="description" content="NetMeter - Speedtest Jaringan Lokal untuk Mengetahui Real Throughput & Kelaikan Bandwidth Fisik Intranet (RS, Klinik, Kampus, Perkantoran).">
+
+    <!-- Speedtest Engine -->
+    <script type="text/javascript" src="speedtest.js"></script>
+    <!-- Offline Excel (.xlsx) & PDF Generation Engine -->
+    <script type="text/javascript" src="assets/js/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="assets/js/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="assets/js/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* ==============================================================================
+           NetStock Ocean Blue Enterprise Theme (ArchitectUI Style)
+           Clean, Human, High Contrast, Anti-AI Aesthetic
+           ============================================================================== */
+        :root {
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Light Mode Default (NetStock Palette) */
+            --bg-page: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-subtle: #f8fafc;
+            --border-color: #e2e8f0;
+            --border-focus: #2563eb;
+            
+            --text-dark: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-light: #eff6ff;
+            --color-primary-border: #bfdbfe;
+            
+            --color-success: #059669;
+            --color-success-hover: #047857;
+            --color-success-light: #ecfdf5;
+            
+            --color-warning: #d97706;
+            --color-warning-light: #fffbeb;
+            
+            --color-danger: #dc2626;
+            --color-danger-hover: #b91c1c;
+            --color-danger-light: #fef2f2;
+            
+            --shadow-card: 0 0.125rem 0.25rem rgba(15, 23, 42, 0.04), 0 0.25rem 0.75rem rgba(15, 23, 42, 0.02);
+            --shadow-btn: 0 0.125rem 0.25rem rgba(37, 99, 235, 0.2);
+            
+            --radius-card: 0.875rem; /* 14px */
+            --radius-input: 0.5625rem; /* 9px */
+            --radius-btn: 0.625rem; /* 10px */
+            --radius-pill: 9999px;
+        }
+
+        [data-theme="dark"] {
+            --bg-page: #0b1120;
+            --bg-card: #151e32;
+            --bg-subtle: #1a253c;
+            --border-color: #27354f;
+            --border-focus: #3b82f6;
+            
+            --text-dark: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --color-primary: #3b82f6;
+            --color-primary-hover: #2563eb;
+            --color-primary-light: rgba(59, 130, 246, 0.15);
+            --color-primary-border: rgba(59, 130, 246, 0.35);
+            
+            --color-success: #10b981;
+            --color-success-hover: #059669;
+            --color-success-light: rgba(16, 185, 129, 0.15);
+            
+            --color-warning: #f59e0b;
+            --color-warning-light: rgba(245, 158, 11, 0.15);
+            
+            --color-danger: #ef4444;
+            --color-danger-hover: #dc2626;
+            --color-danger-light: rgba(239, 68, 68, 0.15);
+            
+            --shadow-card: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+            --shadow-btn: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            font-size: 0.84rem;
+            line-height: 1.45;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0.75rem;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1180px;
+            margin: 0 auto;
+            min-width: 0;
+        }
+
+        /* Top Page Title Bar (ArchitectUI NetStock Style) */
+        .app-header {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.45rem 0.85rem;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.65rem;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            min-width: 0;
+            flex-shrink: 1;
+        }
+
+        .header-icon {
+            width: 2.1rem;
+            height: 2.1rem;
+            border-radius: 0.45rem;
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.05rem;
+            min-width: 0;
+        }
+
+        .header-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .header-title p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .header-status-group, .header-buttons-group {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        @media (max-width: 860px) {
+            .app-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.55rem;
+                padding: 0.6rem 0.85rem;
+            }
+            .header-brand {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 0.4rem;
+            }
+        }
+
+        /* Realtime Online Status Indicator */
+        .online-heartbeat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+
+        .online-heartbeat-badge.is-online {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .online-heartbeat-badge.is-offline {
+            background-color: var(--color-danger-light);
+            color: var(--color-danger);
+            border: 1px solid rgba(220, 38, 38, 0.35);
+        }
+
+        .heartbeat-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .is-online .heartbeat-dot {
+            background-color: var(--color-success);
+            box-shadow: 0 0 6px var(--color-success);
+            animation: pulse-dot 1.8s infinite;
+        }
+
+        .is-offline .heartbeat-dot {
+            background-color: var(--color-danger);
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Buttons (NetStock Architect Style - Human & Clean) */
+        .btn-architect {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.95rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            border: 1px solid transparent;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: #ffffff;
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-btn);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-card);
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-subtle);
+            color: var(--text-dark);
+            border-color: var(--text-muted);
+        }
+
+        .btn-success {
+            background-color: var(--color-success);
+            color: #ffffff;
+            border-color: var(--color-success);
+        }
+
+        .btn-success:hover {
+            background-color: var(--color-success-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--color-danger);
+            color: #ffffff;
+            border-color: var(--color-danger);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--color-danger-hover);
+            border-color: var(--color-danger-hover);
+        }
+
+        .btn-running {
+            background-color: var(--color-danger) !important;
+            border-color: var(--color-danger) !important;
+            animation: pulse-soft 1.5s infinite;
+        }
+
+        @keyframes pulse-soft {
+            0% { opacity: 1; }
+            50% { opacity: 0.85; }
+            100% { opacity: 1; }
+        }
+
+        /* Badges */
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.55rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            line-height: 1;
+        }
+
+        .badge-info {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary-border);
+        }
+
+        .badge-success {
+            background-color: var(--color-success-light);
+            color: var(--color-success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-warning {
+            background-color: var(--color-warning-light);
+            color: var(--color-warning);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        .badge-danger {
+            background-color: var(--color-danger-light);
+            color: var(--color-danger);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        /* Validation Alert Message Banner */
+        .validation-alert {
+            display: none;
+            background-color: var(--color-danger-light);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            color: var(--color-danger);
+            border-radius: var(--radius-card);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.65rem;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Input Card: Wide, Spacious & Well-Organized (No Truncation!) */
+        .form-section-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.65rem 0.95rem;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .form-grid-top {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 0.65rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid-top {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .form-grid-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .form-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        @media (max-width: 860px) {
+            .form-grid-bottom {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.65rem;
+            }
+            .form-controls-row {
+                width: 100%;
+                gap: 0.5rem;
+            }
+            .form-controls-row .form-item {
+                flex: 1 1 calc(50% - 0.5rem);
+                min-width: 130px;
+            }
+            .form-controls-row .select-architect {
+                width: 100%;
+            }
+            #startStopBtn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .form-controls-row .form-item {
+                flex: 1 1 100%;
+            }
+        }
+
+        .form-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .form-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .form-input {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-input);
+            padding: 0.45rem 0.75rem;
+            font-size: 0.84rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            outline: none;
+            transition: all 0.15s;
+        }
+
+        .form-input:focus {
+            border-color: var(--border-focus);
+            background-color: var(--bg-card);
+            box-shadow: 0 0 0 2px var(--color-primary-light);
+        }
+
+        .input-error {
+            border-color: var(--color-danger) !important;
+            background-color: var(--color-danger-light) !important;
+        }
+
+        .select-architect {
+            max-width: 100%;
+            min-width: 0;
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-input);
+            padding: 0.42rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .select-architect:focus {
+            border-color: var(--border-focus);
+        }
+
+        /* Client Specs & Hardware Bar (Fully Expanded, Never Cut Off) */
+        .specs-section-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.55rem 0.85rem;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.5rem 0.85rem;
+        }
+
+        @media (max-width: 820px) {
+            .specs-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .specs-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .spec-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            min-width: 0;
+        }
+
+        .spec-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .spec-val {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+
+        /* Compact Metrics Grid (Above the fold - NO SCROLL) */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .metric-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.5rem 0.75rem;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            min-width: 0;
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.15rem;
+        }
+
+        .metric-name {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .metric-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .metric-unit {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .metric-sub {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Progress Bar inside Download/Upload Cards */
+        .meter-bar {
+            width: 100%;
+            height: 4px;
+            background-color: var(--border-color);
+            border-radius: var(--radius-pill);
+            margin-top: 0.35rem;
+            overflow: hidden;
+        }
+
+        .meter-bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        /* Executive Assessment Summary Card (Right above fold!) */
+        .assessment-executive-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.55rem 0.85rem;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .assessment-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: 0.65rem;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .assessment-banner.tier-optimal {
+            background-color: var(--color-success-light);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .assessment-banner.tier-good {
+            background-color: var(--color-primary-light);
+            border-color: rgba(37, 99, 235, 0.35);
+        }
+
+        .assessment-banner.tier-warning {
+            background-color: var(--color-warning-light);
+            border-color: rgba(217, 119, 6, 0.35);
+        }
+
+        .assessment-banner.tier-danger {
+            background-color: var(--color-danger-light);
+            border-color: rgba(220, 38, 38, 0.35);
+        }
+
+        .grade-badge-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .tier-optimal .grade-badge-circle { background-color: var(--color-success); }
+        .tier-good .grade-badge-circle { background-color: var(--color-primary); }
+        .tier-warning .grade-badge-circle { background-color: var(--color-warning); }
+        .tier-danger .grade-badge-circle { background-color: var(--color-danger); }
+
+        .grade-details h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .grade-details p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+            line-height: 1.35;
+        }
+
+        /* Tab Navigation (Details & History) */
+        .tabs-header {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            gap: 0.35rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0.65rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Detailed Analysis Content */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.65rem;
+        }
+
+        @media (max-width: 768px) {
+            .analysis-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .analysis-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.75rem 0.95rem;
+            box-shadow: var(--shadow-card);
+            min-width: 0;
+        }
+
+        .analysis-box h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .analysis-box p, .analysis-box li {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .analysis-box ul {
+            padding-left: 1.15rem;
+            margin-top: 0.35rem;
+        }
+
+        /* Physical Checklist Table */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.45rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-top: 0.2rem;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+        }
+
+        .checklist-desc strong {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dark);
+        }
+
+        .checklist-desc span {
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+            display: block;
+            line-height: 1.35;
+        }
+
+        /* Centralized Server History Table */
+        .history-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-card);
+            padding: 0.75rem 0.95rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .history-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 860px) {
+            .history-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .history-actions-group {
+                width: 100%;
+            }
+            .history-actions-group .btn-architect,
+            .history-actions-group .select-architect {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+        }
+
+        .history-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .history-table-wrapper {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-input);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.76rem;
+            text-align: left;
+        }
+
+        .history-table th {
+            background-color: var(--bg-subtle);
+            color: var(--text-muted);
+            padding: 0.5rem 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .history-table td {
+            padding: 0.45rem 0.65rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .history-table tr:hover td {
+            background-color: var(--bg-subtle);
+            color: var(--text-dark);
+        }
+
+        .btn-trash {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 4px;
+            transition: color 0.15s;
+        }
+
+        .btn-trash:hover {
+            color: var(--color-danger);
+            background-color: var(--color-danger-light);
+        }
+
+        /* Badge Primary */
+        .badge-primary {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary-border);
+        }
+
+        /* Simple & Professional App Footer (NetMeter) */
+        .app-footer {
+            margin: 1.25rem 1.75rem 1.5rem 1.75rem;
+            padding: 1rem 0.5rem 0.25rem 0.5rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.76rem;
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            max-width: 580px;
+        }
+
+        .footer-app-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer-app-desc {
+            color: var(--text-secondary);
+            line-height: 1.45;
+            margin: 0;
+            font-size: 0.76rem;
+        }
+
+        .footer-tech-stack {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .footer-author-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: 220px;
+        }
+
+        .footer-author-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .footer-author-name {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        .footer-github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.78rem;
+            transition: color 0.15s;
+        }
+
+        .footer-github-link:hover {
+            color: var(--color-primary-hover);
+            text-decoration: underline;
+        }
+
+        .footer-copyright {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Mobile Viewport Optimizations */
+        @media (max-width: 520px) {
+            body {
+                padding: 0.45rem;
+            }
+            .header-title h1 {
+                font-size: 0.95rem;
+            }
+            .header-title p {
+                font-size: 0.68rem;
+                white-space: normal;
+            }
+            .header-actions {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.35rem;
+                width: 100%;
+            }
+            .header-status-group {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 0.35rem;
+            }
+            .header-status-group .online-heartbeat-badge, 
+            .header-status-group #serverStorageBadge {
+                font-size: 0.68rem;
+                padding: 0.25rem 0.35rem;
+                flex: 1 1 0;
+                min-width: 0;
+                justify-content: center;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .header-buttons-group {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 0.35rem;
+            }
+            .header-buttons-group .btn-architect {
+                flex: 1 1 0;
+                min-width: 0;
+                justify-content: center;
+                padding: 0.38rem 0.35rem;
+                font-size: 0.72rem;
+                white-space: nowrap;
+            }
+            .header-buttons-group #themeToggleBtn {
+                flex: 0 0 34px !important;
+                min-width: 34px !important;
+                padding: 0.38rem 0 !important;
+                justify-content: center;
+            }
+            .app-footer {
+                margin: 1rem 0.85rem 1.25rem 0.85rem;
+                padding: 0.85rem 0.25rem 0.25rem 0.25rem;
+            }
+            .footer-inner {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .footer-brand-col, .footer-author-col {
+                width: 100%;
+                min-width: 0;
+            }
+            .form-controls-row .form-item {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.2rem !important;
+                width: 100%;
+            }
+            .form-controls-row .select-architect {
+                width: 100%;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.4rem;
+            }
+            .metric-card {
+                padding: 0.45rem 0.55rem;
+            }
+            .metric-number {
+                font-size: 1.35rem;
+            }
+            .assessment-banner {
+                padding: 0.55rem 0.75rem;
+                gap: 0.6rem;
+            }
+            .grade-badge-circle {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+            }
+            .grade-details h3 {
+                font-size: 0.88rem;
+            }
+            .grade-details p {
+                font-size: 0.73rem;
+            }
+        }
+
+        /* Print Media Stylesheet */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                font-size: 8.5pt;
+            }
+            .header-actions, .form-grid-bottom, .tabs-header, .btn-architect, .btn-trash, .history-toolbar, .validation-alert, .storage-select-mini {
+                display: none !important;
+            }
+            .app-header, .form-section-card, .specs-section-card, .metric-card, .assessment-executive-card, .analysis-box, .history-card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+            }
+            .tab-panel {
+                display: block !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+<div class="app-container">
+
+    <!-- Official Header for Print -->
+    <div class="print-only" style="margin-bottom: 12px; text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px;">
+        <h2 style="font-size: 14pt; font-weight: bold;">BERITA ACARA AUDIT THROUGHPUT JARINGAN LOKAL (INTRANET)</h2>
+        <p style="font-size: 8.5pt; color: #444;">Dokumen Pengujian Real Throughput Fisik & Kelaikan Jaringan Intranet</p>
+    </div>
+
+    <!-- App Header Bar (NetStock Architect Style - NetMeter Compact) -->
+    <div class="app-header">
+        <div class="header-brand">
+            <div class="header-icon" title="NetMeter - Local Throughput Engine">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                </svg>
+            </div>
+            <div class="header-title">
+                <div class="header-title-row">
+                    <h1>NetMeter</h1>
+                    <span class="badge-pill badge-primary" style="font-size: 0.65rem; padding: 0.12rem 0.45rem; font-weight: 700;">PRO INTRANET</span>
+                </div>
+                <p>Speedtest Jaringan Lokal &amp; Asesmen Real Throughput Fisik</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <div class="header-status-group">
+                <!-- Realtime Heartbeat Badge -->
+                <span class="online-heartbeat-badge is-online" id="realtimeBadge" title="Status koneksi ke server laptop">
+                    <span class="heartbeat-dot"></span>
+                    <span id="realtimeText">Online Realtime (0 ms)</span>
+                </span>
+
+                <span class="badge-pill badge-info" id="serverStorageBadge" title="Riwayat tersimpan di laptop server ini">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                    <span id="badgeSubnetText">Laptop Server Storage</span>
+                </span>
+            </div>
+
+            <div class="header-buttons-group">
+                <button class="btn-architect btn-secondary" onclick="exportHistoryToWord()" title="Download Laporan Riwayat Format Word (.doc)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>Export Word</span>
+                </button>
+
+                <button class="btn-architect btn-secondary" onclick="exportHistoryToPDF()" title="Download Laporan Riwayat PDF">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <polyline points="9 15 12 18 15 15"></polyline>
+                    </svg>
+                    <span>Export PDF</span>
+                </button>
+
+                <button class="btn-architect btn-secondary" id="themeToggleBtn" onclick="toggleTheme()" title="Ubah Tema Terang/Gelap">
+                    <svg id="themeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Alert Box -->
+    <div id="validationAlert" class="validation-alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="validationAlertText">Peringatan: Harap lengkapi isian sebelum memulai pengujian.</span>
+    </div>
+
+    <!-- Form Section: Spacious, Clear, No Truncation -->
+    <div class="form-section-card">
+        <!-- Row 1: Location & Hostname (Given Full Width & Ample Room) -->
+        <div class="form-grid-top">
+            <div class="form-item">
+                <label for="testLocationInput" class="form-label" style="color: var(--color-danger);">
+                    Lokasi / Titik Pengujian (Wajib Diisi) *
+                </label>
+                <input type="text" id="testLocationInput" class="form-input" 
+                       placeholder="Contoh: Loket Pendaftaran 1 / Poli Bedah / Lab Komputer 2" value="">
+            </div>
+
+            <div class="form-item">
+                <label for="clientHostInput" class="form-label">
+                    Hostname Desktop Klien
+                </label>
+                <input type="text" id="clientHostInput" class="form-input" 
+                       placeholder="Memeriksa hostname..." value="Memeriksa...">
+            </div>
+        </div>
+
+        <!-- Row 2: Controls & Test Trigger Button -->
+        <div class="form-grid-bottom">
+            <div class="form-controls-row">
+                <div class="form-item" style="flex-direction: row; align-items: center; gap: 0.35rem;">
+                    <span class="form-label">Profil:</span>
+                    <select id="envPreset" class="select-architect" onchange="applyPresetChange()">
+                        <option value="hospital" selected>Rumah Sakit / Klinik (SIMRS, PACS, RME)</option>
+                        <option value="campus">Kampus / Sekolah (Ujian CBT, LMS, Lab)</option>
+                        <option value="office">Perkantoran / Enterprise (NAS, ERP, VoIP)</option>
+                    </select>
+                </div>
+
+                <div class="form-item" style="flex-direction: row; align-items: center; gap: 0.35rem;">
+                    <span class="form-label" style="color: var(--color-danger);">Media *:</span>
+                    <select id="mediaType" class="select-architect" onchange="handleMediaChange()">
+                        <option value="" disabled selected>-- Pilih Media (Wajib) --</option>
+                        <option value="cable">Kabel LAN (Ethernet RJ-45)</option>
+                        <option value="wifi">Wi-Fi (Access Point)</option>
+                    </select>
+                </div>
+
+                <div class="form-item" style="flex-direction: row; align-items: center; gap: 0.35rem;">
+                    <span class="form-label">Durasi:</span>
+                    <select id="testDuration" class="select-architect">
+                        <option value="fast">Cepat (~8 detik)</option>
+                        <option value="standard" selected>Standar (~15 detik)</option>
+                        <option value="stress">Stress Test (~25 detik)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <button id="startStopBtn" class="btn-architect btn-primary" onclick="toggleSpeedtest()">
+                    <svg id="btnPlayIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span id="btnText">MULAI SPEEDTEST</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Hardware & Network Specs Card (Structured & Fully Visible) -->
+    <div class="specs-section-card">
+        <div class="specs-grid">
+            <!-- Cell 1: Network IP & Subnet -->
+            <div class="spec-cell">
+                <span class="spec-title">IP Address & Subnet Lokal</span>
+                <span class="spec-val" id="clientIpDisplay">127.0.0.1</span>
+            </div>
+
+            <!-- Cell 2: Physical MAC Address (ARP) -->
+            <div class="spec-cell">
+                <span class="spec-title">MAC Address Fisik (Tabel ARP)</span>
+                <span class="spec-val" id="clientMacDisplay" style="font-family: monospace;">Memeriksa ARP...</span>
+            </div>
+
+            <!-- Cell 3: Browser & OS -->
+            <div class="spec-cell">
+                <span class="spec-title">Browser & Sistem Operasi</span>
+                <span class="spec-val" id="clientDeviceDisplay">Memeriksa...</span>
+            </div>
+
+            <!-- Cell 4: CPU & RAM -->
+            <div class="spec-cell">
+                <span class="spec-title">Prosesor & Memori RAM Klien</span>
+                <span class="spec-val" id="clientCpuRamDisplay">Memeriksa CPU & RAM...</span>
+            </div>
+
+            <!-- Cell 5: Kapasitas Storage Klien (Real capacity reading without dropdowns) -->
+            <div class="spec-cell">
+                <span class="spec-title">Kapasitas Storage Klien</span>
+                <span class="spec-val" id="clientStorageLabel" style="font-weight: 700; color: var(--color-primary);">Memeriksa kapasitas...</span>
+            </div>
+
+            <!-- Cell 6: Screen & Realtime Clock -->
+            <div class="spec-cell">
+                <span class="spec-title">Layar Klien & Waktu Realtime</span>
+                <span class="spec-val">
+                    <span id="clientScreenDisplay">1920x1080</span> &bull; <span id="clientClockDisplay">23:45:00 WIB</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compact Realtime Metrics Grid (Fits above the fold in split-screen!) -->
+    <div class="metrics-grid">
+        <!-- Download Metric Card -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-name">Download Throughput</span>
+                <span class="badge-pill badge-info" id="dlBadge">0.00 Mbps</span>
+            </div>
+            <div class="metric-number" style="color: var(--color-primary);">
+                <span id="dlValue">0.00</span>
+                <span class="metric-unit">Mbps</span>
+            </div>
+            <div class="meter-bar">
+                <div id="dlBarFill" class="meter-bar-fill" style="background-color: var(--color-primary);"></div>
+            </div>
+            <div class="metric-sub" id="dlSub">Kapasitas transfer dari server</div>
+        </div>
+
+        <!-- Upload Metric Card -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-name">Upload Throughput</span>
+                <span class="badge-pill badge-info" id="ulBadge">0.00 Mbps</span>
+            </div>
+            <div class="metric-number" style="color: #7c3aed;">
+                <span id="ulValue">0.00</span>
+                <span class="metric-unit">Mbps</span>
+            </div>
+            <div class="meter-bar">
+                <div id="ulBarFill" class="meter-bar-fill" style="background-color: #7c3aed;"></div>
+            </div>
+            <div class="metric-sub" id="ulSub">Kapasitas transfer ke server</div>
+        </div>
+
+        <!-- Ping Metric Card -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-name">Latency (Ping)</span>
+            </div>
+            <div class="metric-number">
+                <span id="pingValue">-</span>
+                <span class="metric-unit">ms</span>
+            </div>
+            <div class="metric-sub" id="pingSub">Menunggu test...</div>
+        </div>
+
+        <!-- Jitter Metric Card -->
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-name">Jitter (Variansi)</span>
+            </div>
+            <div class="metric-number">
+                <span id="jitValue">-</span>
+                <span class="metric-unit">ms</span>
+            </div>
+            <div class="metric-sub" id="jitSub">Menunggu test...</div>
+        </div>
+    </div>
+
+    <!-- Executive Assessment Status & Grade Banner (ABOVE THE FOLD - NO SCROLL) -->
+    <div class="assessment-executive-card">
+        <div id="gradeBanner" class="assessment-banner tier-good">
+            <div class="grade-badge-circle" id="gradeBadgeLetter">-</div>
+            <div class="grade-details" style="flex: 1;">
+                <h3 id="gradeTitle">Siap Menjalankan Asesmen Jaringan Lokal</h3>
+                <p id="gradeSummary">Masukkan Lokasi / Titik Pengujian dan pilih Media Koneksi, lalu klik tombol "MULAI SPEEDTEST".</p>
+            </div>
+            <div>
+                <span id="gradeStatusBadge" class="badge-pill badge-info" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;">Standby</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Tabs Section -->
+    <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('tabAnalysis')">Analisis & Risiko Operasional</button>
+        <button class="tab-btn" onclick="switchTab('tabChecklist')">Checklist Fisik Jaringan (IT)</button>
+        <button class="tab-btn" onclick="switchTab('tabHistory')">Riwayat Server (Pusat di Laptop)</button>
+    </div>
+
+    <!-- TAB 1: Analisis & Risiko -->
+    <div id="tabAnalysis" class="tab-panel active">
+        <div class="analysis-grid">
+            <div class="analysis-box">
+                <h4 style="color: var(--color-primary);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Kapasitas Throughput & Standar Link Fisik
+                </h4>
+                <p id="analysisTechnical">
+                    Throughput lokal mengukur real bandwidth antara komputer klien dengan laptop server di ruang server/LAN.
+                </p>
+                <ul style="margin-top: 0.4rem;">
+                    <li><strong>&ge; 600 – 1000 Mbps (Grade A+):</strong> Sangat Baik. Full Gigabit link 1000Base-T (4-pair 8-pin Cat5e/6). Sangat aman untuk PACS/DICOM dan SIMRS.</li>
+                    <li><strong>> 150 – 600 Mbps (Grade A):</strong> Baik. Support Gigabit / Wi-Fi 5GHz. Aman untuk operasional normal.</li>
+                    <li><strong>50 – 150 Mbps (Grade B):</strong> Cukup. Terindikasi limit Fast Ethernet 100 Mbps. Rentan antrean jika file besar dibuka bersamaan.</li>
+                    <li><strong>&lt; 50 Mbps (Grade C/D):</strong> Kurang Baik. Bahaya! Segera periksa fisik kabel, terminasi pin tester, outlet wallplate, atau Access Point.</li>
+                </ul>
+            </div>
+
+            <div class="analysis-box">
+                <h4 style="color: var(--color-danger);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Kendala & Risiko Jika Tetap Dibiarkan
+                </h4>
+                <div id="analysisRisks">
+                    <p style="color: var(--text-muted);">Jalankan speedtest untuk melihat risiko spesifik operasional pada ruangan ini.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Checklist Fisik IT -->
+    <div id="tabChecklist" class="tab-panel">
+        <div class="analysis-box" style="margin-bottom: 0.65rem;">
+            <h4 style="font-size: 0.85rem; margin-bottom: 0.35rem;">Checklist Investigasi & Perbaikan Fisik Jaringan</h4>
+            <p style="color: var(--text-muted); font-size: 0.76rem; margin-bottom: 0.5rem;">
+                Gunakan panduan berikut jika hasil speedtest berada di bawah 50 Mbps atau terkunci di limit 100 Mbps:
+            </p>
+            <div id="checklistContainer">
+                <p style="color: var(--text-muted); padding: 0.5rem 0;">Pilih Tipe Media Koneksi (Kabel LAN atau Wi-Fi) di atas untuk menampilkan panduan checklist fisik.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Centralized Server History (Stored on the Tester Laptop) -->
+    <div id="tabHistory" class="tab-panel">
+        <div class="history-card">
+            <div class="history-toolbar">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-weight: 700; font-size: 0.85rem;">Riwayat Tes Terpusat di Laptop Server</span>
+                    <span class="badge-pill badge-info" id="historyCountBadge">0 Data</span>
+                </div>
+
+                <div class="history-actions-group">
+                    <select id="historyFilterDate" class="select-architect" onchange="filterHistoryByDate()">
+                        <option value="all">Semua Tanggal</option>
+                    </select>
+
+                    <!-- Export Excel (.xlsx) with Formatting & Filter -->
+                    <button class="btn-architect btn-success" onclick="exportHistoryToExcel()" title="Export Riwayat ke File Excel (.xlsx dengan AutoFilter)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="8" y1="13" x2="16" y2="13"></line>
+                            <line x1="8" y1="17" x2="16" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Export Excel (.xlsx)</span>
+                    </button>
+
+                    <!-- Export Word (.doc) with Landscape Layout & Signature Block -->
+                    <button class="btn-architect btn-secondary" onclick="exportHistoryToWord()" title="Export Riwayat ke File Word (.doc Landscape)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Export Word (.doc)</span>
+                    </button>
+
+                    <!-- Export PDF (Direct File Download, No Ctrl+P) -->
+                    <button class="btn-architect btn-secondary" onclick="exportHistoryToPDF()" title="Download Laporan Riwayat Format PDF">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <polyline points="9 15 12 18 15 15"></polyline>
+                        </svg>
+                        <span>Export PDF</span>
+                    </button>
+
+                    <button class="btn-architect btn-secondary" onclick="deleteHistoryToday()" title="Hapus semua riwayat tes hari ini">
+                        <span>Hapus Hari Ini</span>
+                    </button>
+
+                    <button class="btn-architect btn-danger" onclick="deleteAllHistory()" title="Hapus seluruh riwayat di laptop">
+                        <span>Hapus Semua</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="history-table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Waktu & Tanggal</th>
+                            <th>Hostname Desktop</th>
+                            <th>IP & MAC Address</th>
+                            <th>Browser & OS</th>
+                            <th>Hardware Klien</th>
+                            <th>Kapasitas Storage</th>
+                            <th>Lokasi</th>
+                            <th>Media</th>
+                            <th>Download</th>
+                            <th>Upload</th>
+                            <th>Ping</th>
+                            <th>Grade</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="13" style="text-align: center; color: var(--text-muted); padding: 1rem;">Memuat riwayat dari server laptop...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple & Professional App Footer -->
+    <footer class="app-footer">
+        <div class="footer-inner">
+            <div class="footer-brand-col">
+                <div class="footer-app-name">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>NetMeter</span>
+                </div>
+                <div class="footer-tech-stack">Built with ❤️ using HTML5, CSS3, Modern JavaScript &amp; PHP / Node.js Engine</div>
+                <div class="footer-copyright">&copy; 2026 NetMeter. All rights reserved.</div>
+            </div>
+
+            <div class="footer-author-col">
+                <div class="footer-author-title">PENGEMBANG &amp; AUDITOR</div>
+                <div class="footer-author-name">Adi Sani Alviga</div>
+                <a href="https://github.com/sanialviga" target="_blank" rel="noopener noreferrer" class="footer-github-link" title="Buka profil GitHub">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>@sanialviga (https://github.com/sanialviga)</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    // =========================================================================
+    // Core State & Utilities
+    // =========================================================================
+    function I(id) { return document.getElementById(id); }
+
+    let s = null; // Fresh speedtest instance created on every test to prevent re-run bugs
+    let uiData = null;
+    let clientMeta = { 
+        ip: '127.0.0.1', 
+        mac: 'Memeriksa...', 
+        hostname: '', 
+        device: '', 
+        cores: '-', 
+        screen: '-', 
+        mem: '-', 
+        storageSize: 'Memeriksa...'
+    };
+    let serverHistoryList = [];
+    let isTestRunning = false;
+
+    // Theme Switcher (NetStock Light/Dark Theme)
+    function initTheme() {
+        const savedTheme = localStorage.getItem('lan_assessment_theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    }
+
+    function toggleTheme() {
+        const current = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', current);
+        localStorage.setItem('lan_assessment_theme', current);
+        updateThemeIcon(current);
+    }
+
+    function updateThemeIcon(theme) {
+        const icon = I('themeIcon');
+        if (theme === 'dark') {
+            icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        } else {
+            icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+        }
+    }
+
+    // Tabs Switcher
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        
+        if (el) {
+            el.classList.add('active');
+        } else if (typeof event !== 'undefined' && event && event.currentTarget && event.currentTarget.classList) {
+            event.currentTarget.classList.add('active');
+        } else {
+            const btn = document.querySelector(`[onclick*="${tabId}"]`);
+            if (btn) btn.classList.add('active');
+        }
+        if (I(tabId)) I(tabId).classList.add('active');
+
+        if (tabId === 'tabHistory') {
+            loadServerHistory();
+        }
+    }
+
+    function formatNumber(val) {
+        const n = Number(val);
+        if (isNaN(n) || n === 0) return "0.00";
+        if (n < 10) return n.toFixed(2);
+        if (n < 100) return n.toFixed(1);
+        return n.toFixed(0);
+    }
+
+    // =========================================================================
+    // Realtime Clock & Connection Heartbeat Checker
+    // =========================================================================
+    function updateClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        I('clientClockDisplay').textContent = `${timeStr} WIB`;
+    }
+
+    function checkRealtimeHeartbeat() {
+        const t0 = performance.now();
+        fetch('backend/empty.php?t=' + Date.now(), { method: 'GET', cache: 'no-store' })
+            .then(res => {
+                if (res.ok) {
+                    const latency = Math.round(performance.now() - t0);
+                    const badge = I('realtimeBadge');
+                    badge.className = 'online-heartbeat-badge is-online';
+                    I('realtimeText').textContent = `Online Realtime (${latency} ms)`;
+                } else {
+                    throw new Error();
+                }
+            })
+            .catch(() => {
+                const badge = I('realtimeBadge');
+                badge.className = 'online-heartbeat-badge is-offline';
+                I('realtimeText').textContent = `Terputus dari Server!`;
+            });
+    }
+
+    // =========================================================================
+    // Assessment Categorization Logic (User Requirements)
+    // =========================================================================
+    function evaluateSpeed(speed) {
+        speed = Number(speed);
+        if (speed >= 600) {
+            return {
+                tier: 'optimal',
+                grade: 'A+',
+                status: 'Sangat Baik (Gigabit Link Optimal)',
+                color: 'var(--color-success)',
+                summary: 'Throughput mencapai standar Gigabit penuh (600 - 1000+ Mbps). Link fisik 1000Base-T berfungsi maksimal tanpa bottleneck.'
+            };
+        } else if (speed > 150) {
+            return {
+                tier: 'good',
+                grade: 'A',
+                status: 'Baik (Support Gigabit / High-Speed Wi-Fi)',
+                color: 'var(--color-primary)',
+                summary: 'Koneksi mendukung Gigabit atau Wi-Fi frekuensi 5 GHz. Throughput sangat memadai untuk operasional normal harian.'
+            };
+        } else if (speed >= 50) {
+            return {
+                tier: 'warning',
+                grade: 'B',
+                status: 'Cukup (Plafon Fast Ethernet 100 Mbps Limit)',
+                color: 'var(--color-warning)',
+                summary: 'Throughput terbatasi di batas plafon 100 Mbps (Fast Ethernet) atau Wi-Fi 2.4 GHz. Cukup untuk teks ringan, namun rawan antrean jika ada transfer file besar serentak.'
+            };
+        } else {
+            return {
+                tier: 'danger',
+                grade: 'C',
+                status: 'Kurang Baik (Degraded / Sub-optimal - Butuh Perbaikan Segera)',
+                color: 'var(--color-danger)',
+                summary: 'Throughput di bawah 50 Mbps sangat rendah untuk jaringan lokal modern. Mengindikasikan kerusakan fisik kabel, pin terminasi putus/korosi, atau masalah Access Point.'
+            };
+        }
+    }
+
+    // =========================================================================
+    // Input Validation (Mandatory Location & Media Type)
+    // =========================================================================
+    function validateInputs() {
+        const locInput = I('testLocationInput');
+        const mediaSelect = I('mediaType');
+        const alertBox = I('validationAlert');
+        const alertText = I('validationAlertText');
+
+        locInput.classList.remove('input-error');
+        mediaSelect.classList.remove('input-error');
+        alertBox.style.display = 'none';
+
+        if (!locInput.value.trim()) {
+            locInput.classList.add('input-error');
+            locInput.focus();
+            alertText.textContent = "Wajib Diisi: Harap masukkan Lokasi / Titik Pengujian (Contoh: Loket Pendaftaran 1 / Poli Bedah / Lab Komputer 2) sebelum memulai speedtest!";
+            alertBox.style.display = 'flex';
+            return false;
+        }
+
+        if (!mediaSelect.value) {
+            mediaSelect.classList.add('input-error');
+            mediaSelect.focus();
+            alertText.textContent = "Wajib Dipilih: Harap pilih Tipe Media Koneksi (Kabel LAN atau Wi-Fi) terlebih dahulu!";
+            alertBox.style.display = 'flex';
+            return false;
+        }
+
+        return true;
+    }
+
+    function handleMediaChange() {
+        I('mediaType').classList.remove('input-error');
+        I('validationAlert').style.display = 'none';
+        renderChecklist();
+    }
+
+    // =========================================================================
+    // Storage Capacity Cleaner Helper (Extract only capacity, e.g. 477 GB / 512 GB)
+    // =========================================================================
+    function cleanStorageDisplay(val) {
+        if (!val || val === '-') return '-';
+        const match = String(val).match(/(\d+\s*(?:GB|TB))/i);
+        if (match) return match[1];
+        return String(val).replace(/SSD|HDD|\(|\)/gi, '').trim() || '-';
+    }
+
+    // =========================================================================
+    // Speedtest Execution (Fixed Re-Run Bug by Fresh Instance Creation)
+    // =========================================================================
+    function toggleSpeedtest() {
+        if (isTestRunning) {
+            // Abort
+            if (s) {
+                s.abort();
+            }
+            setButtonState(false);
+            isTestRunning = false;
+        } else {
+            // Validate inputs first
+            if (!validateInputs()) {
+                return;
+            }
+
+            // Always create a clean new Speedtest instance to prevent state 3/4 collision bug
+            s = new Speedtest();
+
+            const durationChoice = I('testDuration').value;
+            let dlMax = 15, ulMax = 15;
+            if (durationChoice === 'fast') { dlMax = 8; ulMax = 8; }
+            if (durationChoice === 'stress') { dlMax = 25; ulMax = 25; }
+
+            s.setParameter("time_dl_max", dlMax);
+            s.setParameter("time_ul_max", ulMax);
+            s.setParameter("count_ping", 10);
+            s.setParameter("xhr_dlMultistream", 6);
+            s.setParameter("xhr_ulMultistream", 4);
+            s.setParameter("garbagePhp_chunkSize", 100);
+
+            resetLiveMetrics();
+            setButtonState(true);
+            isTestRunning = true;
+
+            s.onupdate = function(data) {
+                uiData = data;
+                updateLiveUI(data);
+            };
+
+            s.onend = function(aborted) {
+                setButtonState(false);
+                isTestRunning = false;
+                if (!aborted && uiData) {
+                    renderExecutiveAssessment(uiData);
+                    saveResultToServerHistory(uiData);
+                }
+            };
+
+            s.start();
+        }
+    }
+
+    function setButtonState(isRunning) {
+        const btn = I('startStopBtn');
+        const icon = I('btnPlayIcon');
+        const text = I('btnText');
+
+        if (isRunning) {
+            btn.classList.add('btn-running');
+            icon.innerHTML = '<rect x="6" y="6" width="12" height="12"></rect>';
+            text.textContent = "HENTIKAN TEST";
+        } else {
+            btn.classList.remove('btn-running');
+            icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+            text.textContent = "MULAI SPEEDTEST";
+        }
+    }
+
+    function resetLiveMetrics() {
+        I('dlValue').textContent = "0.00";
+        I('ulValue').textContent = "0.00";
+        I('pingValue').textContent = "...";
+        I('jitValue').textContent = "...";
+        I('dlBarFill').style.width = "0%";
+        I('ulBarFill').style.width = "0%";
+        I('dlBadge').textContent = "0.00 Mbps";
+        I('ulBadge').textContent = "0.00 Mbps";
+        I('gradeStatusBadge').textContent = "Sedang Menguji...";
+    }
+
+    function updateLiveUI(data) {
+        if (!data) return;
+
+        // Ping & Jitter
+        if (data.pingStatus) {
+            const p = Number(data.pingStatus);
+            I('pingValue').textContent = formatNumber(p);
+            if (p < 2) I('pingSub').textContent = "Sangat Cepat (LAN Murni)";
+            else if (p < 10) I('pingSub').textContent = "Stabil (LAN/WLAN)";
+            else I('pingSub').textContent = "Agak Tinggi";
+        }
+
+        if (data.jitterStatus) {
+            const j = Number(data.jitterStatus);
+            I('jitValue').textContent = formatNumber(j);
+            if (j < 2) I('jitSub').textContent = "Sangat Stabil";
+            else I('jitSub').textContent = "Fluktuatif";
+        }
+
+        // Download
+        const dl = Number(data.dlStatus || 0);
+        I('dlValue').textContent = formatNumber(dl);
+        I('dlBadge').textContent = `${formatNumber(dl)} Mbps`;
+        const dlPercent = Math.min(100, Math.round((dl / 1000) * 100));
+        I('dlBarFill').style.width = `${dlPercent}%`;
+
+        // Upload
+        const ul = Number(data.ulStatus || 0);
+        I('ulValue').textContent = formatNumber(ul);
+        I('ulBadge').textContent = `${formatNumber(ul)} Mbps`;
+        const ulPercent = Math.min(100, Math.round((ul / 1000) * 100));
+        I('ulBarFill').style.width = `${ulPercent}%`;
+    }
+
+    // =========================================================================
+    // Executive Assessment Renderer (Right at the top, NO SCROLL)
+    // =========================================================================
+    function renderExecutiveAssessment(data) {
+        const dl = Number(data.dlStatus || 0);
+        const ul = Number(data.ulStatus || 0);
+        const primarySpeed = Math.max(dl, ul);
+        const evalResult = evaluateSpeed(primarySpeed);
+        const env = I('envPreset').value;
+
+        // Update Grade Banner
+        const banner = I('gradeBanner');
+        banner.className = `assessment-banner tier-${evalResult.tier}`;
+        I('gradeBadgeLetter').textContent = evalResult.grade;
+        I('gradeTitle').textContent = `GRADE ${evalResult.grade} - ${evalResult.status}`;
+        I('gradeSummary').textContent = evalResult.summary;
+        I('gradeStatusBadge').textContent = evalResult.status.split(' ')[0];
+        I('gradeStatusBadge').style.backgroundColor = evalResult.color;
+        I('gradeStatusBadge').style.color = '#ffffff';
+
+        // Update Technical Box
+        I('analysisTechnical').innerHTML = `
+            Throughput terukur sebesar <strong>${formatNumber(dl)} Mbps Download</strong> dan <strong>${formatNumber(ul)} Mbps Upload</strong> pada titik <em>${I('testLocationInput').value || 'Klien'}</em>.
+            Latensi terukur <strong>${formatNumber(data.pingStatus || 0)} ms</strong> dengan jitter <strong>${formatNumber(data.jitterStatus || 0)} ms</strong>.
+            Hardware Klien: <strong>${clientMeta.cores}</strong> &bull; <strong>${clientMeta.mem}</strong> &bull; Kapasitas Storage: <strong>${cleanStorageDisplay(clientMeta.storageSize)}</strong>.
+            ${evalResult.summary}
+        `;
+
+        // Update Risks Box based on Environment (Professional, Measured & Relevant)
+        let riskHtml = "<ul>";
+        if (env === 'hospital') {
+            if (evalResult.tier === 'danger') {
+                riskHtml += `
+                    <li><strong>Performa Akses Berkurang:</strong> Pengisian dan pembacaan form Rekam Medis Elektronik (RME) atau input SIMRS berpotensi mengalami jeda (latency) saat jam sibuk pelayanan.</li>
+                    <li><strong>Waktu Tunggu File Medis:</strong> Membuka berkas citra radiologi atau lampiran laboratorium dari server lokal akan membutuhkan waktu muat lebih lama.</li>
+                    <li><strong>Rekomendasi Pemeliharaan:</strong> Disarankan melakukan terminasi ulang konektor RJ-45, pengetesan 8 pin kabel LAN, atau pengecekan sinyal Access Point di area ruangan ini.</li>
+                `;
+            } else if (evalResult.tier === 'warning') {
+                riskHtml += `
+                    <li><strong>Throughput Terbatasi Fast Ethernet (100 Mbps):</strong> Sangat memadai untuk operasional entri data teks harian, namun transfer file berukuran besar berjalan dengan kecepatan terbatas.</li>
+                    <li><strong>Rekomendasi Pemeliharaan:</strong> Disarankan menjadwalkan pengecekan pin kabel LAN atau upgrade switch ke Gigabit 1000 Mbps pada jadwal pemeliharaan jaringan berkala.</li>
+                `;
+            } else {
+                riskHtml += `
+                    <li><strong>Koneksi Optimal:</strong> Throughput sangat memadai dan lancar untuk seluruh aktivitas SIMRS, Rekam Medis Elektronik, dan transfer data lokal.</li>
+                    <li><strong>Rekomendasi:</strong> Pertahankan kualitas fisik kabel dan lakukan pembersihan berkala pada port data.</li>
+                `;
+            }
+        } else if (env === 'campus') {
+            if (evalResult.tier === 'danger') {
+                riskHtml += `
+                    <li><strong>Akses Sistem Lambat:</strong> Akses portal ujian CBT lokal atau unduh materi perkuliahan terasa lambat saat diakses serentak oleh banyak mahasiswa.</li>
+                    <li><strong>Rekomendasi Pemeliharaan:</strong> Periksa konektor kabel di meja komputer lab atau periksa beban traffic pada Access Point terdekat.</li>
+                `;
+            } else if (evalResult.tier === 'warning') {
+                riskHtml += `
+                    <li><strong>Kapasitas Cukup untuk Ujian Teks:</strong> Memadai untuk CBT berbasis teks, namun transfer file praktikum berukuran besar akan memakan waktu ekstra.</li>
+                    <li><strong>Rekomendasi Pemeliharaan:</strong> Jadwalkan pergantian kabel atau switch Gigabit secara bertahap saat pemeliharaan lab.</li>
+                `;
+            } else {
+                riskHtml += `
+                    <li><strong>Kapasitas Jaringan Sangat Siap:</strong> Mampu melayani aktivitas praktikum dan ujian serentak dengan lancar tanpa hambatan.</li>
+                `;
+            }
+        } else {
+            if (evalResult.tier === 'danger') {
+                riskHtml += `
+                    <li><strong>Transfer Dokumen Lambat:</strong> Pengambilan dokumen dari File Server / NAS lokal dan sinkronisasi data ERP memerlukan waktu tunggu lebih panjang.</li>
+                    <li><strong>Rekomendasi Pemeliharaan:</strong> Periksa kabel patch cord dari outlet dinding ke PC dan pastikan konektor tidak longgar.</li>
+                `;
+            } else if (evalResult.tier === 'warning') {
+                riskHtml += `
+                    <li><strong>Kapasitas Cukup untuk Harian:</strong> Operasional harian berjalan normal, namun proses pencadangan (backup) data lokal membutuhkan waktu lebih panjang.</li>
+                    <li><strong>Rekomendasi Pemeliharaan:</strong> Disarankan upgrade perangkat switch ke 1000 Mbps untuk kenyamanan transfer data maksimal.</li>
+                `;
+            } else {
+                riskHtml += `
+                    <li><strong>Koneksi Optimal:</strong> Kapasitas link lancar untuk seluruh aktivitas file sharing, ERP, dan database lokal.</li>
+                `;
+            }
+        }
+        riskHtml += "</ul>";
+        I('analysisRisks').innerHTML = riskHtml;
+    }
+
+    function applyPresetChange() {
+        if (uiData) {
+            renderExecutiveAssessment(uiData);
+        }
+    }
+
+    // =========================================================================
+    // Physical Inspection Checklist
+    // =========================================================================
+    function renderChecklist() {
+        const media = I('mediaType').value;
+        const container = I('checklistContainer');
+
+        if (media === 'cable') {
+            container.innerHTML = `
+                <div class="checklist-item">
+                    <input type="checkbox" id="c1">
+                    <label for="c1" class="checklist-desc">
+                        <strong>1. Periksa Kategori Kabel (Cat Rating)</strong>
+                        <span>Pastikan kabel bukan Cat5 lama (maks 100 Mbps). Gunakan minimal <strong>Cat5e, Cat6, atau Cat6a</strong> berkualitas baik untuk Gigabit 1000 Mbps.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="c2">
+                    <label for="c2" class="checklist-desc">
+                        <strong>2. Periksa Konektor RJ-45 & Crimping</strong>
+                        <span>Cek apakah konektor RJ-45 longgar, pin tembaga korosi/berkarat, atau serabut tembaga tidak terjepit sempurna saat crimping.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="c3">
+                    <label for="c3" class="checklist-desc">
+                        <strong>3. Uji dengan LAN Cable Tester (Semua 8 Pin Wajib Menyala!)</strong>
+                        <span>Koneksi Gigabit 1000 Mbps <strong>wajib menggunakan 8 pin tembaga (Pin 1 s/d 8) menyala urut sempurna</strong> (standar T568B/T568A). Jika pin 4, 5, 7, atau 8 mati, link otomatis turun (fallback) menjadi 100 Mbps!</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="c4">
+                    <label for="c4" class="checklist-desc">
+                        <strong>4. Periksa Outlet Modular RJ-45 di Dinding (Faceplate)</strong>
+                        <span>Buka faceplate dinding. Seringkali terminasi punch-down kendor, pin di dalam modular bengkok akibat colokan miring, atau kotor tertutup debu semen.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="c5">
+                    <label for="c5" class="checklist-desc">
+                        <strong>5. Periksa Switch Jaringan (10/100 Mbps vs Gigabit 1000 Mbps)</strong>
+                        <span>Pastikan switch distribusi di ruangan bukan switch jadul 10/100 Mbps, melainkan sudah Gigabit Switch (10/100/1000 Mbps) dan port berstatus Full Duplex.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="c6">
+                    <label for="c6" class="checklist-desc">
+                        <strong>6. Periksa Kabel Sumber / Uplink Backbone</strong>
+                        <span>Cek kabel trunk dari switch ruangan ke Core Switch di Server Room. Pastikan jarak kabel tembaga tidak melebihi 100 meter dan tidak sejajar kabel listrik tegangan tinggi (hindari induksi EMI).</span>
+                    </label>
+                </div>
+            `;
+        } else if (media === 'wifi') {
+            container.innerHTML = `
+                <div class="checklist-item">
+                    <input type="checkbox" id="w1">
+                    <label for="w1" class="checklist-desc">
+                        <strong>1. Periksa Frekuensi Access Point (2.4 GHz vs 5 GHz)</strong>
+                        <span>Pindahkan koneksi ke frekuensi <strong>5 GHz (802.11ac / Wi-Fi 5 atau 802.11ax / Wi-Fi 6)</strong>. Frekuensi 2.4 GHz memiliki batas throughput efektif rendah (&lt;40 Mbps) dan sangat padat interferensi.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="w2">
+                    <label for="w2" class="checklist-desc">
+                        <strong>2. Periksa Wireless Adapter Komputer Klien</strong>
+                        <span>Cek adapter Wi-Fi di komputer/laptop. Banyak USB Wi-Fi dongle murah (tipe 802.11n 150 Mbps) yang secara riil hanya mampu mentransfer 15-30 Mbps.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="w3">
+                    <label for="w3" class="checklist-desc">
+                        <strong>3. Kekuatan Sinyal & Halangan Fisik (Dinding Beton / Timbal)</strong>
+                        <span>Cek kekuatan sinyal (RSSI). Di rumah sakit, dinding timbal ruang radiologi atau tembok tebal beton dapat meredam sinyal secara drastis.</span>
+                    </label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="w4">
+                    <label for="w4" class="checklist-desc">
+                        <strong>4. Interferensi Kanal (Channel Overlap)</strong>
+                        <span>Atur channel width ke 40MHz/80MHz dan hindari channel overlap dengan Access Point tetangga.</span>
+                    </label>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <p style="color: var(--text-muted); padding: 0.5rem 0;">Pilih Tipe Media Koneksi (Kabel LAN atau Wi-Fi) di atas untuk menampilkan panduan checklist fisik.</p>
+            `;
+        }
+    }
+
+    // =========================================================================
+    // Centralized Server History (Stored on the Tester Laptop)
+    // =========================================================================
+    function saveResultToServerHistory(data) {
+        const dl = Number(data.dlStatus || 0);
+        const ul = Number(data.ulStatus || 0);
+        const ping = Number(data.pingStatus || 0);
+        const jit = Number(data.jitterStatus || 0);
+        const evalResult = evaluateSpeed(Math.max(dl, ul));
+
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        const record = {
+            id: 'lan_' + Date.now(),
+            date: dateStr,
+            time: timeStr,
+            fullDate: `${dd}/${mm}/${yyyy} ${timeStr}`,
+            clientHostname: I('clientHostInput').value || clientMeta.hostname || 'Desktop Klien',
+            clientIp: clientMeta.ip || '127.0.0.1',
+            clientMac: clientMeta.mac || 'VLAN / Unknown',
+            clientDevice: clientMeta.device || 'Browser',
+            clientHardware: `${clientMeta.cores} • ${clientMeta.mem}`,
+            clientStorage: cleanStorageDisplay(clientMeta.storageSize),
+            location: I('testLocationInput').value || 'Unit Kerja',
+            env: I('envPreset').options[I('envPreset').selectedIndex].text,
+            media: I('mediaType').value === 'cable' ? 'Kabel LAN' : (I('mediaType').value === 'wifi' ? 'Wi-Fi' : '-'),
+            download: formatNumber(dl),
+            upload: formatNumber(ul),
+            ping: formatNumber(ping),
+            jitter: formatNumber(jit),
+            grade: evalResult.grade,
+            status: evalResult.status
+        };
+
+        // Send to Server Laptop via POST
+        fetch('backend/history.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'save', record })
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                loadServerHistory();
+            }
+        })
+        .catch(err => {
+            console.error('Gagal menyimpan riwayat ke server laptop:', err);
+        });
+    }
+
+    function loadServerHistory() {
+        fetch('backend/history.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && Array.isArray(data.history)) {
+                    serverHistoryList = data.history;
+                    updateDateFilterDropdown();
+                    renderHistoryTable();
+                }
+            })
+            .catch(() => {
+                I('historyTableBody').innerHTML = '<tr><td colspan="13" style="text-align: center; color: var(--color-danger); padding: 1rem;">Gagal memuat riwayat dari server laptop.</td></tr>';
+            });
+    }
+
+    function updateDateFilterDropdown() {
+        const select = I('historyFilterDate');
+        const currentVal = select.value;
+        const dates = [...new Set(serverHistoryList.map(item => item.date).filter(Boolean))];
+
+        select.innerHTML = '<option value="all">Semua Tanggal</option>';
+        dates.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            if (d === currentVal) opt.selected = true;
+            select.appendChild(opt);
+        });
+    }
+
+    function filterHistoryByDate() {
+        renderHistoryTable();
+    }
+
+    function renderHistoryTable() {
+        const tbody = I('historyTableBody');
+        const filterDate = I('historyFilterDate').value;
+        
+        let filtered = serverHistoryList;
+        if (filterDate !== 'all') {
+            filtered = serverHistoryList.filter(item => item.date === filterDate);
+        }
+
+        I('historyCountBadge').textContent = `${filtered.length} Data`;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; color: var(--text-muted); padding: 1rem;">Belum ada riwayat pengujian tersimpan di server laptop.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = "";
+        filtered.forEach(item => {
+            const tr = document.createElement('tr');
+            let gradeBadgeClass = "badge-success";
+            if (item.grade === 'B') gradeBadgeClass = "badge-warning";
+            if (item.grade === 'C' || item.grade === 'D') gradeBadgeClass = "badge-danger";
+
+            tr.innerHTML = `
+                <td><strong>${item.fullDate || item.date}</strong></td>
+                <td><strong style="color: var(--text-dark);">${escapeHtml(item.clientHostname || '-')}</strong></td>
+                <td>${escapeHtml(item.clientIp)}<br><small style="font-family: monospace; color: var(--text-muted);">${escapeHtml(item.clientMac)}</small></td>
+                <td><small>${escapeHtml(item.clientDevice || '-')}</small></td>
+                <td><small>${escapeHtml(item.clientHardware || '-')}</small></td>
+                <td><strong style="color: var(--color-primary);">${escapeHtml(cleanStorageDisplay(item.clientStorage))}</strong></td>
+                <td><strong>${escapeHtml(item.location || '-')}</strong></td>
+                <td>${escapeHtml(item.media || '-')}</td>
+                <td style="color: var(--color-primary); font-weight: 700;">${item.download} Mbps</td>
+                <td style="color: #7c3aed; font-weight: 700;">${item.upload} Mbps</td>
+                <td>${item.ping} ms</td>
+                <td><span class="badge-pill ${gradeBadgeClass}">Grade ${item.grade}</span></td>
+                <td style="text-align: center;">
+                    <button class="btn-trash" onclick="deleteSingleHistory('${item.id}')" title="Hapus riwayat ini">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function deleteSingleHistory(id) {
+        if (!confirm("Hapus 1 data riwayat pengujian ini dari server laptop?")) return;
+
+        fetch('backend/history.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete_single', id })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                loadServerHistory();
+            }
+        });
+    }
+
+    function deleteHistoryToday() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+
+        if (!confirm(`Hapus seluruh data riwayat untuk hari ini (${todayStr}) di server laptop?`)) return;
+
+        fetch('backend/history.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete_date', date: todayStr })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                loadServerHistory();
+            }
+        });
+    }
+
+    function deleteAllHistory() {
+        if (!confirm("PERINGATAN: Apakah Anda yakin ingin menghapus SELURUH riwayat pengujian di server laptop? Tindakan ini tidak dapat dibatalkan.")) return;
+
+        fetch('backend/history.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete_all' })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                loadServerHistory();
+            }
+        });
+    }
+
+    // =========================================================================
+    // Export History to Excel (.xlsx dengan AutoFilter & Format Kolom Rapi)
+    // =========================================================================
+    function exportHistoryToExcel() {
+        const filterDate = I('historyFilterDate').value;
+        let dataToExport = serverHistoryList;
+        if (filterDate !== 'all') {
+            dataToExport = serverHistoryList.filter(item => item.date === filterDate);
+        }
+
+        if (dataToExport.length === 0) {
+            alert('Tidak ada data riwayat untuk diekspor!');
+            return;
+        }
+
+        if (typeof XLSX === 'undefined') {
+            alert('Library Excel sedang dimuat, harap tunggu sejenak...');
+            return;
+        }
+
+        // Header Tabel Excel
+        const header = [
+            "No",
+            "Waktu & Tanggal",
+            "Lokasi / Titik Pengujian",
+            "Hostname Desktop Klien",
+            "IP Address Klien",
+            "MAC Address Fisik",
+            "Browser & OS Klien",
+            "Hardware Klien",
+            "Kapasitas Storage",
+            "Profil Pengujian",
+            "Media Koneksi",
+            "Download (Mbps)",
+            "Upload (Mbps)",
+            "Ping (ms)",
+            "Jitter (ms)",
+            "Grade",
+            "Status Kelaikan Jaringan"
+        ];
+
+        const rows = [header];
+
+        dataToExport.forEach((item, index) => {
+            rows.push([
+                index + 1,
+                item.fullDate || item.date || '',
+                item.location || '-',
+                item.clientHostname || '-',
+                item.clientIp || '-',
+                item.clientMac || '-',
+                item.clientDevice || '-',
+                item.clientHardware || '-',
+                cleanStorageDisplay(item.clientStorage),
+                item.env || '-',
+                item.media || '-',
+                parseFloat(item.download) || 0,
+                parseFloat(item.upload) || 0,
+                parseFloat(item.ping) || 0,
+                parseFloat(item.jitter) || 0,
+                item.grade || '-',
+                item.status || '-'
+            ]);
+        });
+
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+
+        // Atur Lebar Kolom (Widths) agar nyaman dibaca dan tidak terpotong
+        ws['!cols'] = [
+            { wch: 6 },  // No
+            { wch: 20 }, // Waktu & Tanggal
+            { wch: 28 }, // Lokasi / Titik Pengujian
+            { wch: 24 }, // Hostname Desktop
+            { wch: 18 }, // IP Address
+            { wch: 20 }, // MAC Address
+            { wch: 28 }, // Browser & OS
+            { wch: 24 }, // Hardware Klien
+            { wch: 18 }, // Kapasitas Storage
+            { wch: 30 }, // Profil Pengujian
+            { wch: 16 }, // Media Koneksi
+            { wch: 16 }, // Download (Mbps)
+            { wch: 16 }, // Upload (Mbps)
+            { wch: 14 }, // Ping (ms)
+            { wch: 14 }, // Jitter (ms)
+            { wch: 10 }, // Grade
+            { wch: 36 }  // Status Kelaikan
+        ];
+
+        // Pasang Fitur Filter Excel Otomatis (AutoFilter pada semua kolom header A1 s/d Q1)
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
+
+        XLSX.utils.book_append_sheet(wb, ws, "NetMeter Audit LAN");
+
+        const dateSuffix = filterDate === 'all' ? 'Semua_Data' : filterDate;
+        XLSX.writeFile(wb, `NetMeter_Laporan_Audit_LAN_${dateSuffix}.xlsx`);
+    }
+
+    // =========================================================================
+    // Export History to Word (.doc Landscape with KPI Cards & Signature Block)
+    // =========================================================================
+    function exportHistoryToWord() {
+        const filterDate = I('historyFilterDate').value;
+        let dataToExport = serverHistoryList;
+        if (filterDate !== 'all') {
+            dataToExport = serverHistoryList.filter(item => item.date === filterDate);
+        }
+
+        if (dataToExport.length === 0) {
+            alert('Tidak ada data riwayat untuk diekspor!');
+            return;
+        }
+
+        const now = new Date();
+        const printDate = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ' ' +
+                          now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+        let countAPlus = 0, countA = 0, countB = 0, countCD = 0;
+        dataToExport.forEach(item => {
+            if (item.grade === 'A+') countAPlus++;
+            else if (item.grade === 'A') countA++;
+            else if (item.grade === 'B') countB++;
+            else countCD++;
+        });
+
+        const serverInfoStr = `${clientMeta.hostname || 'DESKTOP-SERVER'} (${clientMeta.ip || 'LAN'})`;
+
+        // Table Rows HTML
+        let tableRowsHtml = '';
+        dataToExport.forEach((item, index) => {
+            let gradeBadgeStyle = "background-color: #ecfdf5; color: #059669; border: 1px solid #10b981;";
+            if (item.grade === 'A') gradeBadgeStyle = "background-color: #eff6ff; color: #2563eb; border: 1px solid #3b82f6;";
+            if (item.grade === 'B') gradeBadgeStyle = "background-color: #fffbeb; color: #d97706; border: 1px solid #f59e0b;";
+            if (item.grade === 'C' || item.grade === 'D') gradeBadgeStyle = "background-color: #fef2f2; color: #dc2626; border: 1px solid #ef4444;";
+
+            const bgRow = (index % 2 === 1) ? '#f8fafc' : '#ffffff';
+
+            tableRowsHtml += `
+            <tr style="background-color: ${bgRow};">
+                <td style="text-align: center; font-weight: bold; padding: 6px 4px; border: 1px solid #cbd5e1;">${index + 1}</td>
+                <td style="padding: 6px 6px; border: 1px solid #cbd5e1; white-space: nowrap;">${item.fullDate || item.date || '-'}</td>
+                <td style="padding: 6px 6px; border: 1px solid #cbd5e1; font-weight: bold; color: #0f172a;">${escapeHtml(item.location || '-')}</td>
+                <td style="padding: 6px 6px; border: 1px solid #cbd5e1;">${escapeHtml(item.clientHostname || '-')}</td>
+                <td style="padding: 6px 6px; border: 1px solid #cbd5e1; font-family: Consolas, monospace; font-size: 8pt;">
+                    ${escapeHtml(item.clientIp || '-')}<br>
+                    <span style="color: #64748b;">${escapeHtml(item.clientMac || '-')}</span>
+                </td>
+                <td style="text-align: center; font-weight: bold; color: #2563eb; padding: 6px 4px; border: 1px solid #cbd5e1;">${escapeHtml(cleanStorageDisplay(item.clientStorage))}</td>
+                <td style="text-align: center; padding: 6px 4px; border: 1px solid #cbd5e1;">${escapeHtml(item.media || '-')}</td>
+                <td style="text-align: right; font-weight: bold; color: #2563eb; padding: 6px 6px; border: 1px solid #cbd5e1;">${item.download} Mbps</td>
+                <td style="text-align: right; font-weight: bold; color: #7c3aed; padding: 6px 6px; border: 1px solid #cbd5e1;">${item.upload} Mbps</td>
+                <td style="text-align: center; padding: 6px 4px; border: 1px solid #cbd5e1;">${item.ping} ms<br><span style="font-size: 7.5pt; color: #64748b;">(${item.jitter || '0.00'} ms)</span></td>
+                <td style="text-align: center; padding: 6px 4px; border: 1px solid #cbd5e1;">
+                    <span style="display: inline-block; padding: 2px 8px; border-radius: 9999px; font-weight: bold; font-size: 8pt; ${gradeBadgeStyle}">
+                        Grade ${item.grade}
+                    </span>
+                </td>
+                <td style="padding: 6px 6px; border: 1px solid #cbd5e1; font-size: 8pt; color: #334155;">${escapeHtml(item.status || '-')}</td>
+            </tr>`;
+        });
+
+        const wordHtml = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>NetMeter - Berita Acara Audit Throughput</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+    @page Section1 {
+        size: 841.9pt 595.3pt; /* A4 Landscape: 297mm x 210mm */
+        mso-page-orientation: landscape;
+        margin: 28.35pt 28.35pt 28.35pt 28.35pt;
+        mso-header-margin: 14.15pt;
+        mso-footer-margin: 14.15pt;
+    }
+    div.Section1 {
+        page: Section1;
+    }
+    body {
+        font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+        font-size: 8.5pt;
+        color: #0f172a;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+    table {
+        border-collapse: collapse;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+    }
+    .header-bar {
+        width: 100%;
+        background-color: #2563eb;
+        height: 6px;
+        margin-bottom: 12px;
+    }
+    .header-table {
+        width: 100%;
+        margin-bottom: 14px;
+    }
+    .kpi-table {
+        width: 100%;
+        margin-bottom: 14px;
+    }
+    .kpi-card {
+        padding: 8px 10px;
+        border-radius: 6px;
+        vertical-align: top;
+    }
+    .audit-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+    }
+    .audit-table th {
+        background-color: #2563eb;
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 8pt;
+        padding: 7px 5px;
+        border: 1px solid #1d4ed8;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    .signature-table {
+        width: 100%;
+        margin-top: 18px;
+        page-break-inside: avoid;
+    }
+    .footer-note {
+        font-size: 7.5pt;
+        color: #94a3b8;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 8px;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+<div class="Section1">
+
+    <!-- Top Decorative Line -->
+    <div class="header-bar"></div>
+
+    <!-- Executive Document Header -->
+    <table class="header-table">
+        <tr>
+            <td style="vertical-align: middle; width: 68%;">
+                <table style="border-collapse: collapse;">
+                    <tr>
+                        <td style="background-color: #2563eb; color: #ffffff; font-weight: bold; font-size: 13pt; padding: 4px 10px; border-radius: 4px; text-align: center; width: 36px;">
+                            NM
+                        </td>
+                        <td style="padding-left: 10px;">
+                            <div style="font-size: 13pt; font-weight: bold; color: #0f172a; letter-spacing: -0.2px;">
+                                NetMeter - BERITA ACARA AUDIT THROUGHPUT &amp; KELAIKAN JARINGAN LOKAL
+                            </div>
+                            <div style="font-size: 8pt; color: #475569; margin-top: 2px;">
+                                Laporan Resmi Pengujian Real Throughput, Stabilitas Bandwidth Fisik &amp; Diagnosa Infrastruktur Intranet
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td style="vertical-align: middle; width: 32%; text-align: right;">
+                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; display: inline-block; text-align: left; font-size: 7.5pt;">
+                    <div><span style="color: #64748b;">Waktu Audit:</span> <strong>${printDate}</strong></div>
+                    <div style="margin-top: 2px;"><span style="color: #64748b;">Server Laptop:</span> <strong>${escapeHtml(serverInfoStr)}</strong></div>
+                    <div style="margin-top: 2px;"><span style="color: #64748b;">Total Titik:</span> <strong style="color: #2563eb;">${dataToExport.length} Titik (${filterDate === 'all' ? 'Semua Tanggal' : filterDate})</strong></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- 4 KPI Summary Cards -->
+    <table class="kpi-table" style="border-spacing: 8px; border-collapse: separate;">
+        <tr>
+            <!-- Grade A+ -->
+            <td style="width: 25%; background-color: #ecfdf5; border: 1px solid #10b981; border-radius: 6px; padding: 8px 10px; vertical-align: top;">
+                <div style="font-size: 7.5pt; font-weight: bold; color: #059669; text-transform: uppercase;">Grade A+ • Gigabit Optimal</div>
+                <div style="font-size: 14pt; font-weight: bold; color: #059669; margin: 2px 0;">${countAPlus} <span style="font-size: 8pt; font-weight: normal; color: #334155;">Titik (&ge;600 Mbps)</span></div>
+                <div style="font-size: 7pt; color: #64748b;">Full 1000Base-T (8-pin Cat5e/6) optimal</div>
+            </td>
+            <!-- Grade A -->
+            <td style="width: 25%; background-color: #eff6ff; border: 1px solid #3b82f6; border-radius: 6px; padding: 8px 10px; vertical-align: top;">
+                <div style="font-size: 7.5pt; font-weight: bold; color: #2563eb; text-transform: uppercase;">Grade A • Baik &amp; Stabil</div>
+                <div style="font-size: 14pt; font-weight: bold; color: #2563eb; margin: 2px 0;">${countA} <span style="font-size: 8pt; font-weight: normal; color: #334155;">Titik (&gt;150 - 600 Mbps)</span></div>
+                <div style="font-size: 7pt; color: #64748b;">Support Gigabit / Wi-Fi 5 GHz</div>
+            </td>
+            <!-- Grade B -->
+            <td style="width: 25%; background-color: #fffbeb; border: 1px solid #f59e0b; border-radius: 6px; padding: 8px 10px; vertical-align: top;">
+                <div style="font-size: 7.5pt; font-weight: bold; color: #d97706; text-transform: uppercase;">Grade B • Cukup (Fast Eth)</div>
+                <div style="font-size: 14pt; font-weight: bold; color: #d97706; margin: 2px 0;">${countB} <span style="font-size: 8pt; font-weight: normal; color: #334155;">Titik (50 - 150 Mbps)</span></div>
+                <div style="font-size: 7pt; color: #64748b;">Plafon Fast Ethernet 100 Mbps</div>
+            </td>
+            <!-- Grade C/D -->
+            <td style="width: 25%; background-color: #fef2f2; border: 1px solid #ef4444; border-radius: 6px; padding: 8px 10px; vertical-align: top;">
+                <div style="font-size: 7.5pt; font-weight: bold; color: #dc2626; text-transform: uppercase;">Grade C/D • Perlu Perbaikan</div>
+                <div style="font-size: 14pt; font-weight: bold; color: #dc2626; margin: 2px 0;">${countCD} <span style="font-size: 8pt; font-weight: normal; color: #334155;">Titik (&lt;50 Mbps)</span></div>
+                <div style="font-size: 7pt; color: #64748b;">Indikasi pin terminasi / AP terhambat</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Main Audit History Table -->
+    <table class="audit-table">
+        <thead>
+            <tr>
+                <th style="width: 4%;">No</th>
+                <th style="width: 10%;">Waktu / Tanggal</th>
+                <th style="width: 13%;">Lokasi Pengujian</th>
+                <th style="width: 11%;">Hostname Desktop</th>
+                <th style="width: 11%;">IP &amp; MAC Address</th>
+                <th style="width: 6%;">Storage</th>
+                <th style="width: 6%;">Media</th>
+                <th style="width: 8%;">Download</th>
+                <th style="width: 8%;">Upload</th>
+                <th style="width: 7%;">Latency</th>
+                <th style="width: 6%;">Grade</th>
+                <th style="width: 10%;">Status Kelaikan</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${tableRowsHtml}
+        </tbody>
+    </table>
+
+    <!-- Sign-off / Berita Acara Section (Avoid page-break) -->
+    <table class="signature-table" style="page-break-inside: avoid; border-collapse: collapse;">
+        <tr>
+            <td style="width: 50%; vertical-align: top; padding: 10px 15px;">
+                <div style="font-size: 8.5pt; font-weight: bold; color: #334155;">Mengetahui / Penanggung Jawab IT:</div>
+                <div style="font-size: 8pt; color: #64748b; margin-top: 2px;">Kepala Instalasi SIMRS / Kepala Biro IT Kampus</div>
+                <div style="height: 55px;"></div>
+                <div style="font-size: 8.5pt; color: #0f172a; font-weight: bold;">( ............................................................................ )</div>
+                <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">NIP / ID: ................................................................</div>
+            </td>
+            <td style="width: 50%; vertical-align: top; padding: 10px 15px;">
+                <div style="font-size: 8.5pt; font-weight: bold; color: #334155;">Petugas Pelaksana Pengujian (Auditor Jaringan):</div>
+                <div style="font-size: 8pt; color: #64748b; margin-top: 2px;">Spesialis Jaringan &amp; Infrastruktur Intranet</div>
+                <div style="height: 55px;"></div>
+                <div style="font-size: 8.5pt; color: #0f172a; font-weight: bold;">( ............................................................................ )</div>
+                <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">Tanggal Pengesahan: ${now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer Note -->
+    <div class="footer-note">
+        <table style="width: 100%;">
+            <tr>
+                <td style="font-size: 7.5pt; color: #94a3b8;">
+                    NetMeter Pro • Solusi Asesmen Real Bandwidth &amp; Throughput Jaringan Intranet (RS, Klinik, Kampus, Perkantoran)
+                </td>
+                <td style="font-size: 7.5pt; color: #94a3b8; text-align: right;">
+                    Dokumen Berita Acara Resmi • Dicetak pada ${printDate}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>`;
+
+        // Direct Download as .doc (Compatible with Word, LibreOffice, WPS, Google Docs)
+        const blob = new Blob(['\ufeff' + wordHtml], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const filenameDate = filterDate === 'all' ? 'Semua_Data' : filterDate;
+        a.href = url;
+        a.download = `NetMeter_Laporan_Audit_LAN_${filenameDate}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // =========================================================================
+    // Export History to PDF (Executive NetMeter Audit Report, Direct Download)
+    // =========================================================================
+    function exportHistoryToPDF() {
+        const filterDate = I('historyFilterDate').value;
+        let dataToExport = serverHistoryList;
+        if (filterDate !== 'all') {
+            dataToExport = serverHistoryList.filter(item => item.date === filterDate);
+        }
+
+        if (dataToExport.length === 0) {
+            alert('Tidak ada data riwayat untuk diekspor!');
+            return;
+        }
+
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            alert('Library PDF sedang dimuat, harap tunggu sejenak...');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const now = new Date();
+        const printDate = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ' ' +
+                          now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+        // 1. Top Decorative Brand Bar (NetStock Ocean Blue #2563eb)
+        doc.setFillColor(37, 99, 235);
+        doc.rect(0, 0, 297, 4.5, 'F');
+
+        // 2. Executive Header (NetMeter Brand + Document Title)
+        // Logo icon badge
+        doc.setFillColor(37, 99, 235);
+        doc.roundedRect(12, 8, 10, 10, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.text("NM", 17, 14.5, { align: "center" });
+
+        // App & Document Title (Fit cleanly without truncation)
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(15, 23, 42);
+        doc.text("NetMeter - BERITA ACARA AUDIT THROUGHPUT & KELAIKAN JARINGAN LOKAL", 25, 13.5);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7.5);
+        doc.setTextColor(71, 85, 105);
+        doc.text("Laporan Resmi Pengujian Real Throughput, Stabilitas Bandwidth Fisik & Diagnosa Infrastruktur Intranet", 25, 18);
+
+        // Metadata Card (Right Top - Placed at x=188, width=97, height=14)
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(226, 232, 240);
+        doc.roundedRect(188, 7.5, 97, 14, 1.5, 1.5, 'FD');
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7.2);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Waktu Audit:", 191, 11.5);
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "bold");
+        doc.text(printDate, 218, 11.5);
+
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(100, 116, 139);
+        doc.text("Server Laptop:", 191, 15.5);
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "bold");
+        const serverInfoStr = `${clientMeta.hostname || 'DESKTOP-SERVER'} (${clientMeta.ip || 'LAN'})`;
+        doc.text(serverInfoStr, 218, 15.5);
+
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(100, 116, 139);
+        doc.text("Total Titik Uji:", 191, 19.5);
+        doc.setTextColor(37, 99, 235);
+        doc.setFont("helvetica", "bold");
+        doc.text(`${dataToExport.length} Titik (${filterDate === 'all' ? 'Semua Tanggal' : filterDate})`, 218, 19.5);
+
+        // 3. Count distribution statistics
+        let countAPlus = 0, countA = 0, countB = 0, countCD = 0;
+        dataToExport.forEach(item => {
+            if (item.grade === 'A+') countAPlus++;
+            else if (item.grade === 'A') countA++;
+            else if (item.grade === 'B') countB++;
+            else countCD++;
+        });
+
+        // 4. KPI Summary Cards (4 Professional Dashboard Cards)
+        const cardWidth = 65;
+        const cardGap = 4.3;
+        const cardY = 24.5;
+        const cardH = 15;
+
+        // Card 1: Grade A+ (Gigabit Optimal)
+        doc.setFillColor(236, 253, 245); // light green
+        doc.setDrawColor(16, 185, 129); // green border
+        doc.roundedRect(12, cardY, cardWidth, cardH, 1.5, 1.5, 'FD');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.2);
+        doc.setTextColor(5, 150, 105);
+        doc.text("GRADE A+ • GIGABIT OPTIMAL", 16, cardY + 4.5);
+        doc.setFontSize(11);
+        doc.text(`${countAPlus}`, 16, cardY + 10.5);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.8);
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Titik (>=600 Mbps - Full Gigabit)`, 24, cardY + 10.5);
+        doc.setFontSize(6.3);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Link 1000Base-T berfungsi maksimal", 16, cardY + 13.8);
+
+        // Card 2: Grade A (Baik / Gigabit)
+        const c2X = 12 + cardWidth + cardGap;
+        doc.setFillColor(239, 246, 255); // light blue
+        doc.setDrawColor(37, 99, 235); // blue border
+        doc.roundedRect(c2X, cardY, cardWidth, cardH, 1.5, 1.5, 'FD');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.2);
+        doc.setTextColor(37, 99, 235);
+        doc.text("GRADE A • BAIK & STABIL", c2X + 4, cardY + 4.5);
+        doc.setFontSize(11);
+        doc.text(`${countA}`, c2X + 4, cardY + 10.5);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.8);
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Titik (>150 - 600 Mbps)`, c2X + 12, cardY + 10.5);
+        doc.setFontSize(6.3);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Mendukung Gigabit / Wi-Fi 5 GHz", c2X + 4, cardY + 13.8);
+
+        // Card 3: Grade B (Cukup / Plafon 100 Mbps)
+        const c3X = c2X + cardWidth + cardGap;
+        doc.setFillColor(255, 251, 235); // light amber
+        doc.setDrawColor(217, 119, 6); // amber border
+        doc.roundedRect(c3X, cardY, cardWidth, cardH, 1.5, 1.5, 'FD');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.2);
+        doc.setTextColor(217, 119, 6);
+        doc.text("GRADE B • CUKUP (FAST ETHERNET)", c3X + 4, cardY + 4.5);
+        doc.setFontSize(11);
+        doc.text(`${countB}`, c3X + 4, cardY + 10.5);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.8);
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Titik (50 - 150 Mbps)`, c3X + 12, cardY + 10.5);
+        doc.setFontSize(6.3);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Terbatasi plafon switch/kabel 100 Mbps", c3X + 4, cardY + 13.8);
+
+        // Card 4: Grade C/D (Sub-optimal / Perlu Perbaikan)
+        const c4X = c3X + cardWidth + cardGap;
+        doc.setFillColor(254, 242, 242); // light red
+        doc.setDrawColor(220, 38, 38); // red border
+        doc.roundedRect(c4X, cardY, cardWidth, cardH, 1.5, 1.5, 'FD');
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.2);
+        doc.setTextColor(220, 38, 38);
+        doc.text("GRADE C/D • PERLU PERBAIKAN", c4X + 4, cardY + 4.5);
+        doc.setFontSize(11);
+        doc.text(`${countCD}`, c4X + 4, cardY + 10.5);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.8);
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Titik (< 50 Mbps)`, c4X + 12, cardY + 10.5);
+        doc.setFontSize(6.3);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Indikasi pin konektor / AP terhambat", c4X + 4, cardY + 13.8);
+
+        // 5. Main AutoTable Data
+        const tableColumns = [
+            { header: 'No', dataKey: 'no' },
+            { header: 'Waktu / Tanggal', dataKey: 'date' },
+            { header: 'Lokasi Pengujian', dataKey: 'location' },
+            { header: 'Hostname Desktop', dataKey: 'hostname' },
+            { header: 'IP & MAC Address', dataKey: 'network' },
+            { header: 'Storage', dataKey: 'storage' },
+            { header: 'Media', dataKey: 'media' },
+            { header: 'Download', dataKey: 'download' },
+            { header: 'Upload', dataKey: 'upload' },
+            { header: 'Ping / Jitter', dataKey: 'latency' },
+            { header: 'Grade', dataKey: 'grade' },
+            { header: 'Status Kelaikan Jaringan', dataKey: 'status' }
+        ];
+
+        const tableRows = dataToExport.map((item, index) => {
+            return {
+                no: index + 1,
+                date: item.fullDate || item.date || '-',
+                location: item.location || '-',
+                hostname: item.clientHostname || '-',
+                network: `${item.clientIp || '-'}\n${item.clientMac || '-'}`,
+                storage: cleanStorageDisplay(item.clientStorage),
+                media: item.media || '-',
+                download: `${item.download} Mbps`,
+                upload: `${item.upload} Mbps`,
+                latency: `${item.ping} ms\n(${item.jitter || '0.00'} ms)`,
+                grade: item.grade || '-',
+                status: item.status || '-'
+            };
+        });
+
+        doc.autoTable({
+            columns: tableColumns,
+            body: tableRows,
+            startY: 42.5,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [37, 99, 235], // NetStock Ocean Blue
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 7,
+                halign: 'center',
+                valign: 'middle',
+                cellPadding: 1.6
+            },
+            bodyStyles: {
+                fontSize: 6.5,
+                textColor: [30, 41, 59],
+                valign: 'middle',
+                cellPadding: 1.3
+            },
+            alternateRowStyles: {
+                fillColor: [248, 250, 252]
+            },
+            columnStyles: {
+                0: { halign: 'center', cellWidth: 8 },
+                1: { cellWidth: 24 },
+                2: { cellWidth: 30, fontStyle: 'bold' },
+                3: { cellWidth: 26 },
+                4: { cellWidth: 26 },
+                5: { cellWidth: 16, halign: 'center', fontStyle: 'bold' },
+                6: { cellWidth: 14, halign: 'center' },
+                7: { cellWidth: 22, halign: 'right', fontStyle: 'bold', textColor: [37, 99, 235] },
+                8: { cellWidth: 22, halign: 'right', fontStyle: 'bold', textColor: [124, 58, 237] },
+                9: { cellWidth: 18, halign: 'center' },
+                10: { cellWidth: 15, halign: 'center', fontStyle: 'bold' },
+                11: { cellWidth: 52 }
+            },
+            didParseCell: function(data) {
+                if (data.section === 'body' && data.column.dataKey === 'grade') {
+                    const gradeVal = data.cell.raw;
+                    if (gradeVal === 'A+') {
+                        data.cell.styles.textColor = [5, 150, 105];
+                    } else if (gradeVal === 'A') {
+                        data.cell.styles.textColor = [37, 99, 235];
+                    } else if (gradeVal === 'B') {
+                        data.cell.styles.textColor = [217, 119, 6];
+                    } else {
+                        data.cell.styles.textColor = [220, 38, 38];
+                    }
+                }
+            },
+            margin: { left: 12, right: 12, bottom: 20 },
+            didDrawPage: function(data) {
+                const pageCount = doc.internal.getNumberOfPages();
+                doc.setFontSize(6.8);
+                doc.setTextColor(148, 163, 184);
+                doc.text("NetMeter Pro • Solusi Asesmen Real Bandwidth & Throughput Jaringan Intranet (RS, Klinik, Kampus, Perkantoran)", 12, 204);
+                doc.text(`Halaman ${data.pageNumber} dari ${pageCount}`, 285, 204, { align: "right" });
+            }
+        });
+
+        // 6. Signature / Sign-Off Section (Berita Acara Pengesahan)
+        let finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 140;
+        // If table height approaches the bottom margin (210mm total page height), cleanly break to next page
+        if (finalY > 142) {
+            doc.addPage();
+            finalY = 20;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(8);
+            doc.setTextColor(37, 99, 235);
+            doc.text("PENGESAHAN BERITA ACARA AUDIT THROUGHPUT & KELAIKAN JARINGAN", 12, 16);
+        }
+
+        const signY = finalY + 7;
+        doc.setDrawColor(226, 232, 240);
+        doc.setFillColor(255, 255, 255);
+
+        // Box Kiri: Mengetahui / Penanggung Jawab IT
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.setTextColor(71, 85, 105);
+        doc.text("Mengetahui / Penanggung Jawab IT:", 25, signY);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.8);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Kepala Instalasi SIMRS / Kepala Biro IT Kampus", 25, signY + 4);
+        doc.text("( ............................................................................ )", 25, signY + 22);
+        doc.text("NIP / ID: ................................................................", 25, signY + 26.5);
+
+        // Box Kanan: Auditor / Pelaksana Pengujian
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.setTextColor(71, 85, 105);
+        doc.text("Petugas Pelaksana Pengujian (Auditor Jaringan):", 195, signY);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(6.8);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Spesialis Jaringan & Infrastruktur Intranet", 195, signY + 4);
+        doc.text("( ............................................................................ )", 195, signY + 22);
+        doc.text(`Tanggal Pengesahan: ${now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, 195, signY + 26.5);
+
+        const filenameDate = filterDate === 'all' ? 'Semua_Data' : filterDate;
+        doc.save(`NetMeter_Laporan_Audit_LAN_${filenameDate}.pdf`);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"']/g, function(m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+        });
+    }
+
+    // =========================================================================
+    // Client Device, Hardware & Storage Resolution (Real Capacity Only)
+    // =========================================================================
+    async function resolveClientHardwareAndStorage() {
+        // 1. CPU & Display
+        const cores = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Cores CPU` : 'CPU Standar';
+        const scr = `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio || 1}x)`;
+        const mem = navigator.deviceMemory ? `RAM: ±${navigator.deviceMemory} GB` : 'RAM Standar';
+
+        clientMeta.cores = cores;
+        clientMeta.screen = scr;
+        clientMeta.mem = mem;
+
+        I('clientCpuRamDisplay').textContent = `${cores} • ${mem}`;
+        I('clientScreenDisplay').textContent = scr;
+
+        // 2. Storage Capacity Estimation (Real capacity only, no dropdowns)
+        let storageSize = '512 GB';
+
+        // Check if server already has physical disk size (via PowerShell WMI on server/localhost)
+        if (clientMeta.storage && clientMeta.storage.size) {
+            storageSize = clientMeta.storage.size;
+        } else {
+            // Storage Quota API for LAN Client browser
+            try {
+                if (navigator.storage && navigator.storage.estimate) {
+                    const estimate = await navigator.storage.estimate();
+                    if (estimate.quota) {
+                        const quotaGB = Math.round(estimate.quota / (1024 * 1024 * 1024));
+                        if (quotaGB > 700) storageSize = '1 TB';
+                        else if (quotaGB > 350) storageSize = '512 GB';
+                        else if (quotaGB > 180) storageSize = '256 GB';
+                        else if (quotaGB > 80) storageSize = '128 GB';
+                        else storageSize = `${quotaGB} GB`;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        clientMeta.storageSize = cleanStorageDisplay(storageSize);
+        I('clientStorageLabel').textContent = clientMeta.storageSize;
+    }
+
+    function fetchClientNetworkInfo() {
+        fetch('backend/getIP.php')
+            .then(res => res.json())
+            .then(data => {
+                clientMeta.ip = data.ip;
+                clientMeta.mac = data.mac || 'VLAN / Unknown';
+                clientMeta.device = data.device || 'Browser';
+                clientMeta.hostname = data.hostname || '';
+                if (data.storage) {
+                    clientMeta.storage = data.storage;
+                }
+
+                if (data.ip) {
+                    I('clientIpDisplay').textContent = `${data.ip} (${data.subnetClass || 'LAN'})`;
+                }
+                if (data.mac) {
+                    I('clientMacDisplay').textContent = data.mac;
+                }
+                if (data.device) {
+                    I('clientDeviceDisplay').textContent = data.device;
+                }
+                if (data.hostname && data.hostname !== data.ip) {
+                    I('clientHostInput').value = data.hostname;
+                } else {
+                    I('clientHostInput').value = "PC Klien (" + data.ip + ")";
+                }
+                if (data.subnetClass) {
+                    I('badgeSubnetText').textContent = data.subnetClass;
+                }
+
+                resolveClientHardwareAndStorage();
+            })
+            .catch(() => {
+                I('clientIpDisplay').textContent = "127.0.0.1 (Loopback)";
+                I('clientHostInput').value = "PC Klien";
+                I('clientMacDisplay').textContent = "Localhost";
+                I('clientDeviceDisplay').textContent = navigator.userAgent ? "Browser Klien" : "Unknown";
+                resolveClientHardwareAndStorage();
+            });
+    }
+
+    // Init on Page Load
+    window.addEventListener('load', () => {
+        initTheme();
+        renderChecklist();
+        fetchClientNetworkInfo();
+        loadServerHistory();
+        
+        // Deep-link tab hash support (e.g. #tabHistory)
+        if (window.location.hash) {
+            const h = window.location.hash.substring(1);
+            if (h === 'tabHistory' || h === 'tabChecklist' || h === 'tabAnalysis') {
+                switchTab(h);
+            }
+        }
+
+        // Realtime Clock every 1 second
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Realtime Connection Heartbeat check every 4 seconds
+        checkRealtimeHeartbeat();
+        setInterval(checkRealtimeHeartbeat, 4000);
+    });
+</script>
+
+</body>
+</html>

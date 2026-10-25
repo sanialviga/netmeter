@@ -1,0 +1,44 @@
+# ==============================================================================
+# Antigravity Intranet Speedtest - Security & Performance Configuration
+# Optimized for Local Network Assessment (Hospitals, Clinics, Campuses, Offices)
+# ==============================================================================
+
+<IfModule mod_headers.c>
+    # Security Headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Safe Intranet CORS Headers
+    Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Origin, Accept, Content-Encoding"
+    Header always set Access-Control-Max-Age "86400"
+</IfModule>
+
+# Handle OPTIONS preflight requests smoothly
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+# Disable compression for speedtest garbage data (uncompressed raw throughput)
+<IfModule mod_deflate.c>
+    SetEnvIfNoCase Request_URI "^/.*garbage.*$" no-gzip dont-vary
+    SetEnvIfNoCase Request_URI "^/.*empty.*$" no-gzip dont-vary
+</IfModule>
+
+# Prevent directory indexing
+Options -Indexes
+
+# Protect sensitive database and internal files
+<FilesMatch "^(telemetry_settings\.php|\.env|\.git|\.htaccess|.*\.sql)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
